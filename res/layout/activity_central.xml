@@ -27,85 +27,13 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/linearlayout_disconnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearlayout_re_scan" >
-
-        <Button
-            android:id="@+id/button_connect_to_a_found_device"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Pair" />
-
-        <Button
-            android:id="@+id/button_disconnect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Unpair" />
-
-        <Button
-            android:id="@+id/button_send_abc_central"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Send ABC" />
-    </LinearLayout>
-
-    <ScrollView
-        android:id="@+id/scrolllayout_send"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/linearlayout_disconnect"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true" >
-
-    <LinearLayout
-        android:id="@+id/linearlayout_send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="0dp" >
-
-        <Button
-            android:id="@+id/button_send_00_central"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="00" />
-
-        <Button
-            android:id="@+id/button_send_01_central"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="01" />
-
-        <Button
-            android:id="@+id/button_send_02_central"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="02" />
-
-        <Button
-            android:id="@+id/button_send_03_central"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="03" />
-
-        <Button
-            android:id="@+id/button_send_04_central"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="04" />
-    </LinearLayout>
-
-    </ScrollView>
-
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/textview_central_uuid"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/scrolllayout_send" >
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/linearlayout_re_scan" >
 
         <TextView
             android:id="@+id/textview_central"
@@ -113,15 +41,5 @@
             android:layout_height="wrap_content"
             android:text="" />
     </ScrollView>
-
-    <TextView
-        android:id="@+id/textview_central_uuid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:selectAllOnFocus="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:text="" />
 
 </RelativeLayout>
