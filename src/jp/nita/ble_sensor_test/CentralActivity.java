@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -135,8 +136,22 @@ public class CentralActivity extends Activity {
 
 				if ((type == BluetoothDevice.DEVICE_TYPE_LE || type == BluetoothDevice.DEVICE_TYPE_DUAL) && mManager.getConnectionState(result.getDevice(),
 						BluetoothProfile.GATT) != BluetoothProfile.STATE_CONNECTING) {
+
+					String hex = "";
+					StringBuilder sb = new StringBuilder();
+					SparseArray<byte[]> manufacturerData = result.getScanRecord().getManufacturerSpecificData();
+					for (int i = 0; i < manufacturerData.size(); i++) {
+						int key = manufacturerData.keyAt(i);
+						byte[] bytes = manufacturerData.get(key);
+				        for (byte d : bytes) {
+				            sb.append(String.format("%02X ", d));
+				        }
+				        sb.append("\n");
+					}
+					hex = sb.toString();
+
 					showToastAsync(finalActivity,
-							"found : " + result.getDevice().getAddress() + " / " + result.getDevice().getName() + " (" + result.getRssi() + ") \n" + result.getScanRecord().getManufacturerSpecificData());
+							"found : " + result.getDevice().getAddress() + " / " + result.getDevice().getName() + " (" + result.getRssi() + ") \n" + hex + result.getScanRecord().getManufacturerSpecificData());
 
 					try {
 						Thread.sleep(100);
