@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -26,7 +27,10 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(View v) {
+				String rssiFilter = ((EditText)(findViewById(R.id.textedit_rssi_filter))).getText().toString();
+
 				Intent intent = new Intent(MainActivity.this, CentralActivity.class);
+				intent.putExtra("rssiFilter", rssiFilter);
 				startActivityForResult(intent, REQUEST_CENTRAL);
 			}
 

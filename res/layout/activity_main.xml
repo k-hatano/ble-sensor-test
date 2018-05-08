@@ -15,4 +15,24 @@
         android:text="Central"
         />
 
+    <TextView
+        android:id="@+id/textview_rssi_filter"
+        android:layout_toRightOf="@+id/button_central"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/button_central"
+        android:text="RSSI Filter:"
+        />
+
+    <EditText
+        android:id="@+id/textedit_rssi_filter"
+        android:layout_toRightOf="@+id/textview_rssi_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textview_rssi_filter"
+        android:text="-40"
+        />
+
+
+
 </RelativeLayout>

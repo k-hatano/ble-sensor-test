@@ -34,6 +34,7 @@ public class CentralActivity extends Activity {
 	final static int STATE_SCANNING = 1;
 	final static int STATE_PAIRED = 2;
 	int state;
+	int rssiFilter;
 
 	static Object bleProcess = new Object();
 
@@ -43,6 +44,12 @@ public class CentralActivity extends Activity {
 		setContentView(R.layout.activity_central);
 
 		this.state = STATE_NONE;
+
+		try {
+			rssiFilter = Integer.parseInt(this.getIntent().getStringExtra("rssiFilter"));
+		} catch (NumberFormatException ex) {
+			rssiFilter = 0;
+		}
 
 		mManager = (BluetoothManager) (this.getSystemService(Context.BLUETOOTH_SERVICE));
 
@@ -117,29 +124,32 @@ public class CentralActivity extends Activity {
 				}
 				int type = result.getDevice().getType();
 
-				if ((type == BluetoothDevice.DEVICE_TYPE_LE || type == BluetoothDevice.DEVICE_TYPE_DUAL)) {
-					String hex = "";
-					StringBuilder sb = new StringBuilder();
-					SparseArray<byte[]> manufacturerData = result.getScanRecord().getManufacturerSpecificData();
-					for (int i = 0; i < manufacturerData.size(); i++) {
-						int key = manufacturerData.keyAt(i);
-						byte[] bytes = manufacturerData.get(key);
-						for (byte d : bytes) {
-							sb.append(String.format("%02X ", d));
+				if ((type == BluetoothDevice.DEVICE_TYPE_LE || type == BluetoothDevice.DEVICE_TYPE_DUAL
+						|| type == BluetoothDevice.DEVICE_TYPE_UNKNOWN)) {
+					if (rssiFilter != 0 && result.getRssi() > rssiFilter) {
+						String hex = "";
+						StringBuilder sb = new StringBuilder();
+						SparseArray<byte[]> manufacturerData = result.getScanRecord().getManufacturerSpecificData();
+						for (int i = 0; i < manufacturerData.size(); i++) {
+							int key = manufacturerData.keyAt(i);
+							byte[] bytes = manufacturerData.get(key);
+							for (byte d : bytes) {
+								sb.append(String.format("%02X ", d));
+							}
+							sb.append("\n");
 						}
-						sb.append("\n");
-					}
-					hex = sb.toString();
+						hex = sb.toString();
 
-					showToastAsync(finalActivity,
-							"found : " + result.getDevice().getAddress() + " / " + result.getDevice().getName() + " ("
-									+ result.getRssi() + ") \n" + hex
-									+ result.getScanRecord().getManufacturerSpecificData());
+						showToastAsync(finalActivity,
+								"found : " + result.getDevice().getAddress() + " / " + result.getDevice().getName()
+										+ " (" + result.getRssi() + ") \n" + hex
+										+ result.getScanRecord().getManufacturerSpecificData());
 
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+						try {
+							Thread.sleep(100);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
