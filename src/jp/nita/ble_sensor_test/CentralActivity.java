@@ -1,14 +1,10 @@
 package jp.nita.ble_sensor_test;
 
-import java.util.HashMap;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
@@ -16,7 +12,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,15 +24,8 @@ public class CentralActivity extends Activity {
 	BluetoothAdapter mAdapter;
 	BluetoothLeScanner mScanner;
 	private BluetoothGatt mBleGatt;
-	private boolean mIsBluetoothEnable = false;
-	private BluetoothGattCharacteristic mCharacteristic;
-
-	private HashMap<String, BluetoothDevice> foundDevices = new HashMap<String, BluetoothDevice>();
-	HashMap<String, BluetoothGatt> scanningDevices = new HashMap<String, BluetoothGatt>();
 
 	Handler guiThreadHandler = new Handler();
-
-	private String mStrReceivedNum = "";
 
 	private final static int MESSAGE_NEW_RECEIVEDNUM = 0;
 	private final static int MESSAGE_NEW_SENDNUM = 1;
@@ -75,7 +63,6 @@ public class CentralActivity extends Activity {
 				"bluetooth_address");
 		showToastAsync(finalActivity, "self : " + macAddress);
 
-		foundDevices = new HashMap<String, BluetoothDevice>();
 		this.scanNewDevice();
 
 		this.setListeners(this);
@@ -92,7 +79,6 @@ public class CentralActivity extends Activity {
 		findViewById(R.id.button_re_scan).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				foundDevices = new HashMap<String, BluetoothDevice>();
 				CentralActivity.this.scanNewDevice();
 			}
 		});
@@ -130,28 +116,25 @@ public class CentralActivity extends Activity {
 					return;
 				}
 				int type = result.getDevice().getType();
-				if (scanningDevices.size() >= 4 || scanningDevices.containsKey(result.getDevice().getAddress())) {
-					return;
-				}
 
-				if ((type == BluetoothDevice.DEVICE_TYPE_LE || type == BluetoothDevice.DEVICE_TYPE_DUAL) && mManager.getConnectionState(result.getDevice(),
-						BluetoothProfile.GATT) != BluetoothProfile.STATE_CONNECTING) {
-
+				if ((type == BluetoothDevice.DEVICE_TYPE_LE || type == BluetoothDevice.DEVICE_TYPE_DUAL)) {
 					String hex = "";
 					StringBuilder sb = new StringBuilder();
 					SparseArray<byte[]> manufacturerData = result.getScanRecord().getManufacturerSpecificData();
 					for (int i = 0; i < manufacturerData.size(); i++) {
 						int key = manufacturerData.keyAt(i);
 						byte[] bytes = manufacturerData.get(key);
-				        for (byte d : bytes) {
-				            sb.append(String.format("%02X ", d));
-				        }
-				        sb.append("\n");
+						for (byte d : bytes) {
+							sb.append(String.format("%02X ", d));
+						}
+						sb.append("\n");
 					}
 					hex = sb.toString();
 
 					showToastAsync(finalActivity,
-							"found : " + result.getDevice().getAddress() + " / " + result.getDevice().getName() + " (" + result.getRssi() + ") \n" + hex + result.getScanRecord().getManufacturerSpecificData());
+							"found : " + result.getDevice().getAddress() + " / " + result.getDevice().getName() + " ("
+									+ result.getRssi() + ") \n" + hex
+									+ result.getScanRecord().getManufacturerSpecificData());
 
 					try {
 						Thread.sleep(100);
@@ -185,7 +168,6 @@ public class CentralActivity extends Activity {
 
 	@Override
 	protected void onDestroy() {
-		mIsBluetoothEnable = false;
 		if (mScanner != null) {
 			mScanner.stopScan(mLeScanCallback);
 		}
@@ -197,19 +179,6 @@ public class CentralActivity extends Activity {
 	}
 
 	final CentralActivity finalActivity = this;
-
-	private Handler mBleHandler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case MESSAGE_NEW_RECEIVEDNUM:
-				showToastAsync(finalActivity, "received : " + msg);
-				break;
-			case MESSAGE_NEW_SENDNUM:
-				showToastAsync(finalActivity, "sended : " + msg);
-				break;
-			}
-		}
-	};
 
 	public void showToastAsync(final CentralActivity activity, final String text) {
 		guiThreadHandler.post(new Runnable() {
