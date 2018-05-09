@@ -132,6 +132,10 @@ public class CentralActivity extends Activity {
 						SparseArray<byte[]> manufacturerData = result.getScanRecord().getManufacturerSpecificData();
 						for (int i = 0; i < manufacturerData.size(); i++) {
 							int key = manufacturerData.keyAt(i);
+							byte mIDMajor = (byte)(key / 0x100);
+							byte mIDMinor = (byte)(key % 0x100);
+							sb.append(String.format("%02X %02X : ", mIDMajor, mIDMinor));
+
 							byte[] bytes = manufacturerData.get(key);
 							for (byte d : bytes) {
 								sb.append(String.format("%02X ", d));
@@ -142,8 +146,10 @@ public class CentralActivity extends Activity {
 
 						showToastAsync(finalActivity,
 								"found : " + result.getDevice().getAddress() + " / " + result.getDevice().getName()
-										+ " (" + result.getRssi() + ") \n" + hex
-										+ result.getScanRecord().getManufacturerSpecificData());
+										+ " (" + result.getRssi() + ") \n" + result.getScanRecord().getDeviceName() + "\n"
+										+ "advertiseFlags : " + result.getScanRecord().getAdvertiseFlags() + "\n"
+										+ "txPowerLevel : " + result.getScanRecord().getTxPowerLevel() + "\n"
+										+ hex);
 
 						try {
 							Thread.sleep(100);
